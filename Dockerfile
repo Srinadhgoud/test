@@ -1,15 +1,23 @@
-# Start with a base image (use the latest Node.js image)
-FROM node:16.13.2-alpine
+FROM ubuntu
+MAINTAINER Kimbro Staken
 
-# Set the working directory
-WORKDIR /app
+RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list
+RUN apt-get update
 
-# Install a deprecated version of a package that causes an error
-# Example: trying to install an outdated version of "express" that isn't compatible
-#RUN npm install express@3.0.0
+RUN apt-get install -y wget sudo supervisor
 
-# Install the latest version of npm (just to simulate a full setup)
-RUN npm install -g react-apexcharts@1.0.0
+RUN apt-get install -y python-software-properties 
+RUN add-apt-repository ppa:saltstack/salt
+RUN apt-get update
 
-# Display Node.js version for testing
-CMD ["node", "-v"]
+# Keep upstart from complaining
+RUN dpkg-divert --local --rename --add /sbin/initctl
+RUN ln -s /bin/true /sbin/initctl
+
+RUN apt-get install -y salt-minion 
+
+ADD ./supervisor-salt.conf /etc/supervisor/conf.d/
+
+RUN echo 'master: salt-master.local' > /etc/salt/minion
+
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]  
