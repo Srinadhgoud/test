@@ -24,7 +24,7 @@ RUN apt-get update -y && \
 USER root
 
 # Set the timezone by creating the symbolic link (with root privileges)
-RUN ln -fs /usr/share/zoneinfo/UTC /etc/localtime && dpkg-reconfigure --frontend noninteractive tzdata
+#RUN ln -fs /usr/share/zoneinfo/UTC /etc/localtime && dpkg-reconfigure --frontend noninteractive tzdata
 
 # Set working directory
 WORKDIR /app
