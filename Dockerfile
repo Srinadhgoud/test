@@ -1,7 +1,7 @@
 # Use a base image (e.g., Ubuntu)
 FROM ubuntu:20.04
 
-# Set environment variables
+\
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=America/New_York
 
