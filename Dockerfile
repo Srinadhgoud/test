@@ -1,15 +1,23 @@
-FROM ubuntu
-MAINTAINER Kimbro Staken
-USER root
-RUN apt-get update -y
-RUN apt-get install -y software-properties-common python-is-python3
-RUN add-apt-repository ppa:chris-lea/node.js
-RUN echo "deb http://us.archive.ubuntu.com/ubuntu/ precise universe" >> /etc/apt/sources.list
-#RUN apt-get update
-RUN apt-get install -y nodejs
-#RUN apt-get install -y nodejs=0.6.12~dfsg1-1ubuntu1
-RUN mkdir /var/www
+# Use the official Python image as a base
+FROM python:3.9-slim-buster
 
-COPY app.js /var/www/app.js
+# Set environment variables
+ENV PYTHONUNBUFFERED 1
+ENV FLASK_APP=app.py
+ENV FLASK_RUN_HOST=0.0.0.0
 
-CMD ["/usr/bin/node", "/var/www/app.js"]
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the requirements file and install dependencies
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+
+# Copy the application code into the container
+COPY . /app
+
+# Expose port 5000 to the outside world
+EXPOSE 5000
+
+# Run the Flask app when the container launches
+CMD ["flask", "run"]
